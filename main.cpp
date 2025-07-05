@@ -20,12 +20,28 @@ vector<string> split(const string &str) //a vector is basically a resizeable arr
     return tokens;
 }
 
+class Process {       
+  public:          
+    string processName;   
+
+    int processID;        
+    double processMemUsage;  
+    
+    void display() {
+        cout << processName + " | " << processID << " | " << processMemUsage << "\n";
+    }
+
+    Process(string processName, int processID, double processMemUsage) {
+        this->processName = processName;
+        this->processID = processID;
+        this->processMemUsage = processMemUsage;
+    }
+};
+
 int main()
 {
     string line;
     ifstream fileToProcess("processes.txt");
-
-    string processName, processID, processMemUsage;
 
     if (fileToProcess.is_open())
     {
@@ -33,11 +49,8 @@ int main()
         {
             auto words = split(line);
 
-            processName = words[0];
-            processID = words[1];
-            processMemUsage = words[2];
-
-            cout << processName + " | " + processID + " | " + processMemUsage << "\n";
+            Process currentProcess(words[0], stoi(words[1]), stod(words[2]));
+            currentProcess.display();
         }
         fileToProcess.close();
     }
