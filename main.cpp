@@ -1,14 +1,16 @@
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <vector>
+#include <vector> //a vector is basically a resizeable array, it can shrink and grow dynamically if needed :D
 #include <sstream>
+
+#include <windows.h>
+#include <psapi.h>
 
 #include "process.hpp"
 
 using namespace std;
 
-vector<string> split(const string &str) //a vector is basically a resizeable array, it can shrink and grow dynamically if needed :D
+vector<string> split(const string &str) 
 {
     vector<string> tokens;
     istringstream iss(str);
@@ -26,24 +28,40 @@ vector<Process> allProcesses;
 
 int main()
 {
-    string line;
-    ifstream fileToProcess("processes.txt");
+    DWORD processIDs[1024]; //A DWORD is a 32-bit unsigned integer (range: 0 through 4294967295 decimal). Because a DWORD is unsigned, its first bit (Most Significant Bit (MSB)) is not reserved for signing.
+    DWORD bytesReturned;
+    HANDLE processHandle; // a handle is basically a "key/ticket" that windows gives us to access a resource
+    CHAR processName[MAX_PATH]; //creates a buffer of 260 characters
 
-    if (fileToProcess.is_open())
+    if (EnumProcesses(processIDs, sizeof(processIDs), &bytesReturned)) // Retrieves the process id for each process object in the system
     {
-        while (getline(fileToProcess, line))
+        int numProcesses = bytesReturned / sizeof(DWORD); 
+
+        for (int i = 0; i < numProcesses; i++) 
         {
-            auto words = split(line);
+            DWORD processID = processIDs[i];
 
-            Process currentProcess(words[0], stoi(words[1]), stod(words[2]));
-            // currentProcess.display();
-            allProcesses.push_back(currentProcess);
+            processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processIDs[i]);
+
+            if (processHandle != NULL)
+            {
+                                                    //tells the function what the buffer size of processName is (260!) and prevents a buffer overflow
+                if (GetModuleBaseNameA(processHandle, NULL, processName, sizeof(processName))) 
+                {
+                    cout << "Process ID: " << processID << " Name: " << processName << "\n";
+                }
+                else
+                {
+                    cout << "Process ID: " << processID << " Name: <unknown>" << "\n";
+                }
+            }
+            else
+            {
+                cout << "Process ID: " << processID << " Name: <access denied>" << "\n";
+            }
+
+            CloseHandle(processHandle);
         }
-        fileToProcess.close();
-    }
-    else
-    {
-        cout << "Unable to open file";
     }
 
     Process highestMemProcess = allProcesses[0];
