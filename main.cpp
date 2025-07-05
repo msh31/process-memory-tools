@@ -38,6 +38,8 @@ class Process {
     }
 };
 
+vector<Process> allProcesses;
+
 int main()
 {
     string line;
@@ -50,7 +52,8 @@ int main()
             auto words = split(line);
 
             Process currentProcess(words[0], stoi(words[1]), stod(words[2]));
-            currentProcess.display();
+            // currentProcess.display();
+            allProcesses.push_back(currentProcess);
         }
         fileToProcess.close();
     }
@@ -58,6 +61,17 @@ int main()
     {
         cout << "Unable to open file";
     }
+
+    Process highestMemProcess = allProcesses[0];
+
+    for (const auto& process : allProcesses) {
+        if (process.processMemUsage > highestMemProcess.processMemUsage) {
+            highestMemProcess = process;
+        }
+    }
+
+    cout << "Process with highest memory usage:\n";
+    highestMemProcess.display();
 
     return 0;
 }
