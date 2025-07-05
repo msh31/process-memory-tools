@@ -1,22 +1,12 @@
-#include <iostream>
+#include "process.hpp"
 
-using namespace std;
-
-class Process {       
-  public:          
-    string processName;   
-    int processID;        
-    double processMemUsage;  
-    void display();
-};
-
-int main() {
-  Process processInfo;  
-
-  processInfo.processID = 15; 
-  processInfo.processName = "Some text";
-
-  cout << processInfo.processID << "\n";
-  cout << processInfo.processName;
-  return 0;
+Process::Process(string processName, int processID, double processMemUsage) {
+            this->processName = processName;
+        this->processID = processID;
+        this->processMemUsage = processMemUsage;
 }
+
+void Process::display() {
+    cout << processName + " | " << processID << " | " << processMemUsage << "\n";
+}
+
