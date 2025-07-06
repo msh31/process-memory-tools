@@ -20,34 +20,32 @@ vector<Process> ProcessManager::getAll()
 
             processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, processIDs[i]);
 
-            if (processHandle != NULL)
-            {
-                cout << "Process ID: " << processID << " Name: " << processName << "\n";
-
-                // tells the function what the buffer size of processName is (260!) and prevents a buffer overflow
-                if (GetModuleBaseNameA(processHandle, NULL, processName, sizeof(processName)))
-                {
-                    if (GetProcessMemoryInfo(processHandle, &memCounter, sizeof(memCounter)))
-                    {
-                        //size_t can store the maximum size of a theoretically possible object of any type (including array) and is commonly used for array indexing and loop counting
-                        SIZE_T memUsageBytes = memCounter.WorkingSetSize;
-
-                        // dividing 2 integers in C++ results in a truncated integer result, so we cast one of the values to a double so the division happens as a float operation
-                        double memUsageMB = static_cast<double>(memUsageBytes) / (1024 * 1024);
-
-                        //emplace_back constructs the object directly in the vector's memory location, while push_back creates a temporary object first, then copies/moves it.
-                        //so emplace_back is basically more effiecient and faster
-                        processes.emplace_back(string(processName), processID, memUsageMB);
-                    }
-                }
-                else
-                {
-                    cout << "Process ID: " << processID << " Name: <unknown>" << "\n";
-                }
+            if (processHandle == NULL) 
+            { 
+                cout << "Process ID: " << processID << " Name: <access denied>" << "\n"; 
+                continue;
             }
-            else
+
+            if (!GetModuleBaseNameA(processHandle, NULL, processName, sizeof(processName))) 
+            { 
+                cout << "Process ID: " << processID << " Name: <unknown>" << "\n"; 
+                CloseHandle(processHandle);
+                continue;  
+            }
+
+            cout << "Process ID: " << processID << " Name: " << processName << "\n";
+
+            if (GetProcessMemoryInfo(processHandle, &memCounter, sizeof(memCounter)))
             {
-                cout << "Process ID: " << processID << " Name: <access denied>" << "\n";
+                //size_t can store the maximum size of a theoretically possible object of any type (including array) and is commonly used for array indexing and loop counting
+                SIZE_T memUsageBytes = memCounter.WorkingSetSize;
+
+                // dividing 2 integers in C++ results in a truncated integer result, so we cast one of the values to a double so the division happens as a float operation
+                double memUsageMB = static_cast<double>(memUsageBytes) / (1024 * 1024);
+
+                //emplace_back constructs the object directly in the vector's memory location, while push_back creates a temporary object first, then copies/moves it.
+                //so emplace_back is basically more effiecient and faster
+                processes.emplace_back(string(processName), processID, memUsageMB);
             }
 
             CloseHandle(processHandle);

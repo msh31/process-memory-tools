@@ -9,21 +9,8 @@
 #include "process.hpp"
 #include "ProcessManager.hpp"
 
-using namespace std;
-
-vector<string> split(const string &str) 
-{
-    vector<string> tokens;
-    istringstream iss(str);
-    string token;
-
-    while (iss >> token)
-    {
-        tokens.push_back(token);
-    }
-
-    return tokens;
-}
+using std::cout;
+using std::vector;
 
 int main()
 {

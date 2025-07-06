@@ -7,7 +7,8 @@
 #include <psapi.h> // For process functions
 #include "process.hpp"
 
-using namespace std;
+using std::cout;
+using std::vector;
 
 class ProcessManager {       
   public:          

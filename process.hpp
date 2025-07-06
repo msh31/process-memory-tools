@@ -3,7 +3,8 @@
 
 #include <iostream>
 
-using namespace std;
+using std::cout;
+using std::string;
 
 class Process {       
   public:          
