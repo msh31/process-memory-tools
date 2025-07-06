@@ -2,6 +2,9 @@
 #define HEADERFILE_H
 
 #include <iostream>
+#include <windows.h>
+#include <psapi.h> // For process functions
+#include <vector>
 
 class Process {       
   public:          
@@ -12,7 +15,7 @@ class Process {
     
     void display();
 
-    Process(std::string processName, int processID, double processMemUsage);
+    Process(int processID);
 };
 
 #endif
