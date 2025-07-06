@@ -3,19 +3,16 @@
 
 #include <iostream>
 
-using std::cout;
-using std::string;
-
 class Process {       
   public:          
-    string processName;   
+    std::string processName;   
 
     int processID;        
     double processMemUsage;  
     
     void display();
 
-    Process(string processName, int processID, double processMemUsage);
+    Process(std::string processName, int processID, double processMemUsage);
 };
 
 #endif
